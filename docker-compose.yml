@@ -1,0 +1,34 @@
+version: '3.9'
+
+# All containers bind to 127.0.0.1 only.
+# Nginx on the host handles SSL termination and public routing.
+
+services:
+
+  # FastAPI — Twilio webhooks, health check, LiveKit webhook receiver
+  voice_api:
+    build: .
+    container_name: voice_api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8005:8000"
+    env_file: .env
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # LiveKit agent worker — joins rooms and runs the voice pipeline
+  voice_worker:
+    build: .
+    container_name: voice_worker
+    restart: unless-stopped
+    command: python -m app.agent
+    env_file: .env
+    mem_limit: 3g
+    depends_on:
+      voice_api:
+        condition: service_healthy
