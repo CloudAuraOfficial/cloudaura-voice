@@ -43,7 +43,7 @@ Thumbs.db
 *.ogg
 *.bin
 downloads/
-models/
+/models/
 
 # Logs
 *.log
