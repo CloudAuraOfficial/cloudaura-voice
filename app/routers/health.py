@@ -13,8 +13,3 @@ async def health_check() -> HealthResponse:
         status="ok",
         environment=settings.environment,
     )
-
-
-@router.get("/", include_in_schema=False)
-async def root() -> dict:
-    return {"service": "cloudaura-voice", "status": "ok"}
