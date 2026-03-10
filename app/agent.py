@@ -106,7 +106,8 @@ async def entrypoint(ctx: JobContext) -> None:
         session.transcript_parts.append(f"Aura: {content}")
         log.debug("agent.aura_speech", preview=content[:80])
 
-    agent.start(ctx.room)
+    participant = await ctx.wait_for_participant()
+    await agent.start(ctx.room, participant)
     log.info("agent.pipeline_started")
 
     # Open the conversation
