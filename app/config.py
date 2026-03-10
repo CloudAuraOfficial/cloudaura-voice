@@ -24,9 +24,12 @@ class Settings(BaseSettings):
     openai_model: str = "gpt-4o-mini"
 
     # ElevenLabs
-    elevenlabs_api_key: str
-    elevenlabs_voice_id: str
+    elevenlabs_api_key: str = ""
+    elevenlabs_voice_id: str = ""
     elevenlabs_model_id: str = "eleven_turbo_v2_5"
+
+    # TTS provider: "openai" or "elevenlabs"
+    tts_provider: str = "openai"
 
     # Twilio
     twilio_account_sid: str

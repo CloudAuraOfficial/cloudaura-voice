@@ -31,6 +31,21 @@ class CallSession:
         self.airtable_id: Optional[str] = None
 
 
+def _build_tts(settings):
+    """Build TTS instance based on configured provider."""
+    if settings.tts_provider == "elevenlabs" and settings.elevenlabs_api_key:
+        return elevenlabs.TTS(
+            voice=elevenlabs.Voice(
+                id=settings.elevenlabs_voice_id,
+                name="Sarah",
+                category="premade",
+            ),
+            model=settings.elevenlabs_model_id,
+            api_key=settings.elevenlabs_api_key,
+        )
+    return openai.TTS(voice="nova")
+
+
 async def entrypoint(ctx: JobContext) -> None:
     """
     LiveKit agent entrypoint — called once per dispatched room.
@@ -83,11 +98,7 @@ async def entrypoint(ctx: JobContext) -> None:
             model=settings.openai_model,
             temperature=0.4,
         ),
-        tts=elevenlabs.TTS(
-            voice_id=settings.elevenlabs_voice_id,
-            model_id=settings.elevenlabs_model_id,
-            api_key=settings.elevenlabs_api_key,
-        ),
+        tts=_build_tts(settings),
         chat_ctx=initial_ctx,
         allow_interruptions=True,
         interrupt_speech_duration=0.6,
@@ -107,14 +118,18 @@ async def entrypoint(ctx: JobContext) -> None:
         log.debug("agent.aura_speech", preview=content[:80])
 
     participant = await ctx.wait_for_participant()
-    await agent.start(ctx.room, participant)
+    agent.start(ctx.room, participant)
     log.info("agent.pipeline_started")
 
     # Open the conversation
     await agent.say(GREETING_MESSAGE, allow_interruptions=True)
 
+    # Keep the entrypoint alive until the room closes
+    disconnect_event = asyncio.Event()
+    ctx.room.on("disconnected", lambda: disconnect_event.set())
+
     try:
-        await ctx.wait_for_disconnect()
+        await disconnect_event.wait()
     finally:
         await _close_session(session, airtable, log)
 

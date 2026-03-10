@@ -21,12 +21,8 @@ class AirtableService:
         """Create a new interaction record. Returns the Airtable record ID."""
         try:
             fields = {
-                "CallSID": record.call_sid,
-                "CallerNumber": record.caller_number,
-                "CallerName": record.caller_name or "Unknown",
-                "RoomName": record.room_name,
-                "StartTime": record.start_time.isoformat(),
-                "ResolutionStatus": record.resolution_status.value,
+                "caller_number": record.caller_number,
+                "created_at": record.start_time.strftime("%Y-%m-%d"),
             }
             result = self._table.create(fields)
             logger.info(
@@ -58,20 +54,10 @@ class AirtableService:
         """Patch an existing interaction record with final call data."""
         try:
             fields: dict = {}
-            if end_time:
-                fields["EndTime"] = end_time.isoformat()
             if duration_seconds is not None:
-                fields["DurationSeconds"] = duration_seconds
+                fields["duration_seconds"] = duration_seconds
             if transcript:
-                fields["Transcript"] = transcript[:100_000]  # Airtable field limit
-            if intent:
-                fields["Intent"] = intent
-            if resolution_status:
-                fields["ResolutionStatus"] = resolution_status.value
-            if agent_notes:
-                fields["AgentNotes"] = agent_notes
-            if caller_name:
-                fields["CallerName"] = caller_name
+                fields["transcript"] = transcript[:100_000]  # Airtable field limit
 
             if fields:
                 self._table.update(airtable_id, fields)
@@ -88,7 +74,7 @@ class AirtableService:
     async def find_by_call_sid(self, call_sid: str) -> Optional[dict]:
         """Return the first Airtable record matching the given Twilio CallSID."""
         try:
-            formula = match({"CallSID": call_sid})
+            formula = match({"caller_number": call_sid})
             records = self._table.all(formula=formula)
             return records[0] if records else None
         except Exception as exc:
