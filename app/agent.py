@@ -15,6 +15,9 @@ from app.services.airtable_service import AirtableService
 
 logger = structlog.get_logger(__name__)
 
+# Pre-load VAD model at import time to avoid per-call delay
+_vad = silero.VAD.load()
+
 
 class CallSession:
     """Holds mutable state for a single inbound call."""
@@ -87,7 +90,7 @@ async def entrypoint(ctx: JobContext) -> None:
     log.info("agent.room_connected")
 
     agent = VoicePipelineAgent(
-        vad=silero.VAD.load(),
+        vad=_vad,
         stt=deepgram.STT(
             model="nova-2-phonecall",
             language="en-US",
