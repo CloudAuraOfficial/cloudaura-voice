@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import StarletteHTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.config import get_settings
 from app.logging_config import configure_logging
@@ -41,6 +42,8 @@ def create_app() -> FastAPI:
         redoc_url=None,
         lifespan=lifespan,
     )
+
+    Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
 
     app.include_router(health.router)
     app.include_router(webhooks.router)

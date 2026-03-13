@@ -26,3 +26,6 @@ structlog>=24.2.0
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
 python-dotenv>=1.0.0
+
+# ── Prometheus metrics ────────────────────────────────────────────────────────
+prometheus-fastapi-instrumentator>=7.0.0
