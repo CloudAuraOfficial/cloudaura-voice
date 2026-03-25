@@ -60,10 +60,16 @@ async def entrypoint(ctx: JobContext) -> None:
     settings = get_settings()
     log = logger.bind(room=ctx.room.name)
 
+    is_web = ctx.room.name.startswith("aura-web-")
+
     # Parse call metadata from room name
-    parts = ctx.room.name.split("_", 2)
-    call_sid = parts[1] if len(parts) > 1 else ctx.room.name
-    caller_number = parts[2].replace("-", "+") if len(parts) > 2 else "unknown"
+    if is_web:
+        call_sid = ctx.room.name
+        caller_number = "web-browser"
+    else:
+        parts = ctx.room.name.split("_", 2)
+        call_sid = parts[1] if len(parts) > 1 else ctx.room.name
+        caller_number = parts[2].replace("-", "+") if len(parts) > 2 else "unknown"
 
     session = CallSession(
         call_sid=call_sid,
@@ -124,8 +130,14 @@ async def entrypoint(ctx: JobContext) -> None:
     agent.start(ctx.room, participant)
     log.info("agent.pipeline_started")
 
-    # Open the conversation
-    await agent.say(GREETING_MESSAGE, allow_interruptions=True)
+    # Open the conversation — different greeting for web vs phone
+    if is_web:
+        await agent.say(
+            "Hi! I'm Aura, Ranjith's AI assistant. Feel free to ask me anything about his background.",
+            allow_interruptions=True,
+        )
+    else:
+        await agent.say(GREETING_MESSAGE, allow_interruptions=True)
 
     # Keep the entrypoint alive until the room closes
     disconnect_event = asyncio.Event()

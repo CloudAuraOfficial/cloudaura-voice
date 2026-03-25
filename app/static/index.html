@@ -1338,27 +1338,18 @@
         </svg>
     </button>
 
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
     <script>
-        // Audio toggle
-        const auraAudio = document.getElementById('auraAudio');
+        // LiveKit WebRTC click-to-talk
         const visualizer = document.getElementById('auraVisualizer');
         const iconMuted = document.getElementById('iconMuted');
         const iconPlaying = document.getElementById('iconPlaying');
         const unmuteLabel = document.getElementById('unmuteLabel');
         const waveformEl = document.getElementById('waveform');
-        let isPlaying = false;
 
-        function toggleAudio() {
-            if (isPlaying) {
-                auraAudio.pause();
-                auraAudio.currentTime = 0;
-                setMutedState();
-            } else {
-                auraAudio.play();
-                setPlayingState();
-            }
-            isPlaying = !isPlaying;
-        }
+        let livekitRoom = null;
+        let isConnected = false;
+        let isConnecting = false;
 
         function setPlayingState() {
             visualizer.classList.add('playing');
@@ -1376,10 +1367,64 @@
             waveformEl.classList.remove('active');
         }
 
-        auraAudio.addEventListener('ended', () => {
-            isPlaying = false;
-            setMutedState();
-        });
+        function setConnectingState() {
+            visualizer.classList.add('playing');
+            iconMuted.style.display = 'none';
+            iconPlaying.style.display = 'block';
+            unmuteLabel.classList.add('hidden');
+        }
+
+        async function toggleAudio() {
+            if (isConnecting) return;
+
+            if (isConnected && livekitRoom) {
+                livekitRoom.disconnect();
+                livekitRoom = null;
+                isConnected = false;
+                setMutedState();
+                return;
+            }
+
+            isConnecting = true;
+            setConnectingState();
+
+            try {
+                const resp = await fetch('https://voice.cloudaura.cloud/token', { method: 'POST' });
+                if (!resp.ok) throw new Error('Token request failed');
+                const { token, url } = await resp.json();
+
+                const room = new LivekitClient.Room({
+                    audioCaptureDefaults: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                    },
+                });
+
+                room.on(LivekitClient.RoomEvent.Disconnected, () => {
+                    isConnected = false;
+                    isConnecting = false;
+                    livekitRoom = null;
+                    setMutedState();
+                });
+
+                room.on(LivekitClient.RoomEvent.ActiveSpeakersChanged, (speakers) => {
+                    const agentSpeaking = speakers.some(s => s.identity && s.identity.startsWith('agent'));
+                    waveformEl.classList.toggle('active', agentSpeaking);
+                });
+
+                await room.connect(url, token);
+                await room.localParticipant.setMicrophoneEnabled(true);
+
+                livekitRoom = room;
+                isConnected = true;
+                setPlayingState();
+            } catch (err) {
+                console.error('LiveKit connection failed:', err);
+                setMutedState();
+            } finally {
+                isConnecting = false;
+            }
+        }
 
         // Generate waveform bars
         const waveform = document.getElementById('waveform');

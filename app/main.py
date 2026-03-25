@@ -4,6 +4,7 @@ from pathlib import Path
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.exceptions import StarletteHTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -11,7 +12,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from app.config import get_settings
 from app.logging_config import configure_logging
 from app.models.schemas import ErrorResponse
-from app.routers import health, webhooks
+from app.routers import health, token, webhooks
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -43,9 +44,20 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "https://voice.cloudaura.cloud",
+            "http://localhost:8000",
+        ],
+        allow_methods=["POST"],
+        allow_headers=["Content-Type"],
+    )
+
     Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
 
     app.include_router(health.router)
+    app.include_router(token.router)
     app.include_router(webhooks.router)
 
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
