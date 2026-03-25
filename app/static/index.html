@@ -1415,6 +1415,20 @@
                     waveformEl.classList.toggle('active', agentSpeaking);
                 });
 
+                // Attach remote audio tracks to the DOM for playback
+                room.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+                    console.log('[Aura] Track subscribed:', track.kind, 'from', participant.identity);
+                    if (track.kind === 'audio') {
+                        const el = track.attach();
+                        el.id = 'aura-agent-audio';
+                        document.body.appendChild(el);
+                    }
+                });
+
+                room.on(LivekitClient.RoomEvent.TrackUnsubscribed, (track) => {
+                    track.detach().forEach(el => el.remove());
+                });
+
                 console.log('[Aura] Connecting to room...');
                 await room.connect(url, token);
                 console.log('[Aura] Connected! Enabling mic...');

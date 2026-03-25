@@ -10,7 +10,7 @@ from livekit.plugins import deepgram, elevenlabs, openai, silero
 from app.config import get_settings
 from app.logging_config import configure_logging
 from app.models.schemas import InteractionRecord, ResolutionStatus
-from app.prompts.system_prompt import GREETING_MESSAGE, PERSONAL_AGENT_PROMPT
+from app.prompts.system_prompt import GREETING_MESSAGE, PERSONAL_AGENT_PROMPT, WEB_GREETING_MESSAGE
 from app.services.airtable_service import AirtableService
 
 logger = structlog.get_logger(__name__)
@@ -132,10 +132,7 @@ async def entrypoint(ctx: JobContext) -> None:
 
     # Open the conversation — different greeting for web vs phone
     if is_web:
-        await agent.say(
-            "Hi! I'm Aura, Ranjith's AI assistant. Feel free to ask me anything about his background.",
-            allow_interruptions=True,
-        )
+        await agent.say(WEB_GREETING_MESSAGE, allow_interruptions=True)
     else:
         await agent.say(GREETING_MESSAGE, allow_interruptions=True)
 
