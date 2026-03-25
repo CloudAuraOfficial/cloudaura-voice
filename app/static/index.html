@@ -1389,9 +1389,11 @@
             setConnectingState();
 
             try {
-                const resp = await fetch('https://voice.cloudaura.cloud/token', { method: 'POST' });
-                if (!resp.ok) throw new Error('Token request failed');
+                console.log('[Aura] Fetching token...');
+                const resp = await fetch('/token', { method: 'POST' });
+                if (!resp.ok) throw new Error('Token request failed: ' + resp.status);
                 const { token, url } = await resp.json();
+                console.log('[Aura] Token received, connecting to', url);
 
                 const room = new LivekitClient.Room({
                     audioCaptureDefaults: {
@@ -1401,6 +1403,7 @@
                 });
 
                 room.on(LivekitClient.RoomEvent.Disconnected, () => {
+                    console.log('[Aura] Disconnected');
                     isConnected = false;
                     isConnecting = false;
                     livekitRoom = null;
@@ -1412,14 +1415,17 @@
                     waveformEl.classList.toggle('active', agentSpeaking);
                 });
 
+                console.log('[Aura] Connecting to room...');
                 await room.connect(url, token);
+                console.log('[Aura] Connected! Enabling mic...');
                 await room.localParticipant.setMicrophoneEnabled(true);
+                console.log('[Aura] Mic enabled. Ready.');
 
                 livekitRoom = room;
                 isConnected = true;
                 setPlayingState();
             } catch (err) {
-                console.error('LiveKit connection failed:', err);
+                console.error('[Aura] Connection failed:', err);
                 setMutedState();
             } finally {
                 isConnecting = false;

@@ -37,21 +37,21 @@ async def create_token() -> JSONResponse:
     finally:
         await api.aclose()
 
-    # Generate access token for the browser participant
-    token = AccessToken(
-        api_key=settings.livekit_api_key,
-        api_secret=settings.livekit_api_secret,
+    # Generate access token for the browser participant (v1.x builder API)
+    token = (
+        AccessToken(
+            api_key=settings.livekit_api_key,
+            api_secret=settings.livekit_api_secret,
+        )
+        .with_identity(identity)
+        .with_name("Web Visitor")
+        .with_grants(VideoGrants(
+            room_join=True,
+            room=room_name,
+            can_publish=True,
+            can_subscribe=True,
+        ))
     )
-    token.identity = identity
-    token.name = "Web Visitor"
-
-    grant = VideoGrants(
-        room_join=True,
-        room=room_name,
-        can_publish=True,
-        can_subscribe=True,
-    )
-    token.video_grants = grant
 
     jwt_token = token.to_jwt()
 
