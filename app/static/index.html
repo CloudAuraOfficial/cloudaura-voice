@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura — AI Voice Agent for Ranjith</title>
-    <meta name="description" content="Aura is a personal AI voice agent that handles inbound recruiter calls for Ranjith.">
+    <title>Aura — AI Voice Agent | Never Miss a Recruiter Call</title>
+    <meta name="description" content="Aura is a production AI voice agent that screens, qualifies, and converts recruiter calls 24/7. Built by Ranjith.">
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <!-- Open Graph -->
     <meta property="og:title" content="Aura — AI Voice Agent">
-    <meta property="og:description" content="A personal AI voice agent that handles inbound recruiter calls for Ranjith. Available 24/7.">
+    <meta property="og:description" content="AI Voice Agent that screens, qualifies, and converts recruiter calls — 24/7. Try the live demo.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://voice.cloudaura.cloud">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Aura — AI Voice Agent">
-    <meta name="twitter:description" content="A personal AI voice agent that handles inbound recruiter calls for Ranjith. Available 24/7.">
+    <meta name="twitter:description" content="AI Voice Agent that screens, qualifies, and converts recruiter calls — 24/7. Try the live demo.">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
         *, *::before, *::after {
             margin: 0;
@@ -40,12 +40,10 @@
             --aura-glow-3: rgba(244, 114, 182, 0.1);
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'DM Sans', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             overflow-x: hidden;
@@ -151,16 +149,17 @@
         }
 
         .logo-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 600;
-            font-size: 20px;
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            font-size: 22px;
             color: var(--text-primary);
         }
 
         .logo-text span {
             color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 13px;
             margin-left: 8px;
         }
 
@@ -190,9 +189,7 @@
             font-weight: 500 !important;
         }
 
-        .nav-cta:hover {
-            opacity: 0.9;
-        }
+        .nav-cta:hover { opacity: 0.9; }
 
         .nav-links a.active {
             color: var(--text-primary);
@@ -228,9 +225,8 @@
         .mobile-menu a {
             color: var(--text-primary);
             text-decoration: none;
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Instrument Serif', serif;
             font-size: 24px;
-            font-weight: 500;
             transition: color 0.2s;
         }
 
@@ -324,11 +320,11 @@
         }
 
         .hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Instrument Serif', serif;
             font-size: clamp(48px, 8vw, 88px);
-            font-weight: 700;
+            font-weight: 400;
             line-height: 1.05;
-            letter-spacing: -2px;
+            letter-spacing: -1px;
             margin-bottom: 24px;
             animation: fadeInUp 0.8s ease 0.1s both;
         }
@@ -338,15 +334,25 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-style: italic;
         }
 
-        .hero p {
-            font-size: 18px;
+        .hero p.hero-tagline {
+            font-size: 20px;
             color: var(--text-secondary);
-            max-width: 560px;
-            margin: 0 auto 40px;
+            max-width: 600px;
+            margin: 0 auto 16px;
             line-height: 1.7;
             animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero p.hero-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--accent-cyan);
+            opacity: 0.7;
+            margin: 0 auto 40px;
+            animation: fadeInUp 0.8s ease 0.25s both;
         }
 
         .hero-actions {
@@ -507,6 +513,44 @@
             50% { transform: scale(1.08); opacity: 1; }
         }
 
+        /* ── Status indicator ──────────────────────────────────────── */
+        .status-indicator {
+            text-align: center;
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            height: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease 0.5s both;
+        }
+
+        .status-indicator.connected {
+            color: #22c55e;
+        }
+
+        .status-indicator.speaking {
+            color: var(--accent-violet);
+        }
+
+        .status-indicator .status-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .status-indicator.connected .status-dot {
+            background: #22c55e;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        .status-indicator.speaking .status-dot {
+            background: var(--accent-violet);
+            animation: pulse-dot 0.8s ease-in-out infinite;
+        }
+
         /* ── Waveform section ───────────────────────────────────────── */
         .waveform-bar {
             display: flex;
@@ -539,8 +583,9 @@
 
         /* ── Section headers ────────────────────────────────────────── */
         .section-label {
-            font-size: 12px;
-            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 3px;
             color: var(--accent-violet);
@@ -548,10 +593,10 @@
         }
 
         .section-title {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Instrument Serif', serif;
             font-size: clamp(32px, 5vw, 48px);
-            font-weight: 700;
-            letter-spacing: -1px;
+            font-weight: 400;
+            letter-spacing: -0.5px;
             margin-bottom: 16px;
         }
 
@@ -569,6 +614,101 @@
 
         .section-header .section-subtitle {
             margin: 0 auto;
+        }
+
+        /* ── Why This Exists ───────────────────────────────────────── */
+        .why-section {
+            position: relative;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .why-problem {
+            position: relative;
+        }
+
+        .why-problem-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+            align-items: flex-start;
+        }
+
+        .why-problem-item:last-child { margin-bottom: 0; }
+
+        .why-x {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #ef4444;
+            font-size: 14px;
+        }
+
+        .why-check {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #22c55e;
+            font-size: 14px;
+        }
+
+        .why-problem-text h4 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .why-problem-text p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .why-solution {
+            padding: 40px;
+            border-radius: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .why-solution::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background: radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.08), transparent 60%);
+        }
+
+        .why-solution h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 24px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .why-solution p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+            position: relative;
         }
 
         /* ── How it works ───────────────────────────────────────────── */
@@ -599,9 +739,7 @@
             transition: opacity 0.4s ease;
         }
 
-        .step-card:hover::before {
-            opacity: 1;
-        }
+        .step-card:hover::before { opacity: 1; }
 
         .step-card:hover {
             border-color: rgba(139, 92, 246, 0.2);
@@ -609,9 +747,8 @@
         }
 
         .step-number {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Instrument Serif', serif;
             font-size: 56px;
-            font-weight: 700;
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(34, 211, 238, 0.15));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -621,7 +758,7 @@
         }
 
         .step-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'DM Sans', sans-serif;
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 12px;
@@ -673,7 +810,7 @@
         .capability-icon.green { background: rgba(34, 197, 94, 0.12); }
 
         .capability-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'DM Sans', sans-serif;
             font-size: 19px;
             font-weight: 600;
             margin-bottom: 10px;
@@ -723,6 +860,113 @@
         .dot-green { background: #22c55e; }
         .dot-amber { background: #f59e0b; }
 
+        /* ── Architecture section ──────────────────────────────────── */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .arch-item {
+            padding: 28px 20px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arch-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 2px;
+            background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan));
+            border-radius: 0 0 2px 2px;
+        }
+
+        .arch-item:hover {
+            border-color: rgba(139, 92, 246, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .arch-icon {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .arch-item h4 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .arch-item p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .arch-tradeoff {
+            text-align: center;
+            margin-top: 32px;
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: 17px;
+            color: var(--text-muted);
+        }
+
+        /* ── Trust layer ───────────────────────────────────────────── */
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .trust-item {
+            padding: 24px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .trust-item:hover {
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .trust-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            color: #22c55e;
+        }
+
+        .trust-item h4 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .trust-item p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
         /* ── Profile section ────────────────────────────────────────── */
         .profile-section {
             position: relative;
@@ -753,9 +997,8 @@
         }
 
         .stat-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
+            font-family: 'Instrument Serif', serif;
+            font-size: 36px;
             background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -818,16 +1061,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Instrument Serif', serif;
             font-size: 28px;
-            font-weight: 700;
             margin-bottom: 16px;
         }
 
         .profile-card .name {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
+            font-family: 'Instrument Serif', serif;
+            font-size: 20px;
         }
 
         .profile-card .role {
@@ -857,6 +1098,14 @@
             position: relative;
         }
 
+        .cta-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
         .phone-display {
             display: inline-flex;
             align-items: center;
@@ -865,10 +1114,10 @@
             border-radius: 16px;
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
-            margin-top: 40px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 24px;
-            font-weight: 500;
+            margin-top: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 400;
             letter-spacing: 1px;
         }
 
@@ -889,59 +1138,6 @@
             30% { transform: rotate(8deg); }
             40% { transform: rotate(-8deg); }
             50% { transform: rotate(0deg); }
-        }
-
-        /* ── Footer ─────────────────────────────────────────────────── */
-        footer {
-            padding: 40px 0;
-            border-top: 1px solid var(--border-subtle);
-            text-align: center;
-        }
-
-        footer p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        footer a {
-            color: var(--text-secondary);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            color: var(--text-primary);
-        }
-
-        /* ── Scroll animations ──────────────────────────────────────── */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── Responsive ─────────────────────────────────────────────── */
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .hamburger { display: block; }
-            .steps-grid { grid-template-columns: 1fr; }
-            .capabilities-grid { grid-template-columns: 1fr; }
-            .profile-layout { grid-template-columns: 1fr; gap: 40px; }
-            .profile-visual { order: -1; }
-            .profile-aura-container { width: 280px; height: 280px; }
-            .profile-card { inset: 30px; }
-            .phone-display { font-size: 18px; padding: 12px 24px; }
-            section { padding: 60px 0; }
-            .back-to-top { bottom: 20px; right: 20px; }
         }
 
         /* ── Conversation demo ──────────────────────────────────────── */
@@ -1012,8 +1208,9 @@
         }
 
         .conv-label {
-            font-size: 11px;
-            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 4px;
@@ -1021,6 +1218,92 @@
 
         .conv-label.caller-name { color: var(--accent-cyan); }
         .conv-label.aura-name { color: var(--accent-violet); }
+
+        /* Typing cursor for conversation */
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--accent-violet);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink-cursor 0.7s step-end infinite;
+        }
+
+        @keyframes blink-cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ── Footer ─────────────────────────────────────────────────── */
+        footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+
+        footer .footer-main {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        footer .footer-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--text-primary);
+        }
+
+        /* ── Scroll animations ──────────────────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Responsive ─────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .capabilities-grid { grid-template-columns: 1fr; }
+            .profile-layout { grid-template-columns: 1fr; gap: 40px; }
+            .profile-visual { order: -1; }
+            .profile-aura-container { width: 280px; height: 280px; }
+            .profile-card { inset: 30px; }
+            .phone-display { font-size: 16px; padding: 12px 24px; }
+            section { padding: 60px 0; }
+            .back-to-top { bottom: 20px; right: 20px; }
+            .why-grid { grid-template-columns: 1fr; gap: 32px; }
+            .arch-grid { grid-template-columns: repeat(2, 1fr); }
+            .arch-grid .arch-item:last-child { grid-column: span 2; }
+            .trust-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .arch-grid { grid-template-columns: 1fr; }
+            .arch-grid .arch-item:last-child { grid-column: span 1; }
+            .trust-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -1048,8 +1331,9 @@
                     <div class="logo-text">Aura <span>Voice Agent</span></div>
                 </a>
                 <ul class="nav-links" id="navLinks">
+                    <li><a href="#why" data-section="why">Why</a></li>
                     <li><a href="#how-it-works" data-section="how-it-works">How It Works</a></li>
-                    <li><a href="#capabilities" data-section="capabilities">Capabilities</a></li>
+                    <li><a href="#architecture" data-section="architecture">Architecture</a></li>
                     <li><a href="#about" data-section="about">About</a></li>
                     <li><a href="tel:+14259619363" class="nav-cta">Call Now</a></li>
                 </ul>
@@ -1064,8 +1348,9 @@
             <button class="mobile-menu-close" aria-label="Close menu" onclick="document.getElementById('mobileMenu').classList.remove('open')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
+            <a href="#why" onclick="document.getElementById('mobileMenu').classList.remove('open')">Why</a>
             <a href="#how-it-works" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
-            <a href="#capabilities" onclick="document.getElementById('mobileMenu').classList.remove('open')">Capabilities</a>
+            <a href="#architecture" onclick="document.getElementById('mobileMenu').classList.remove('open')">Architecture</a>
             <a href="#about" onclick="document.getElementById('mobileMenu').classList.remove('open')">About</a>
             <a href="tel:+14259619363" onclick="document.getElementById('mobileMenu').classList.remove('open')">Call Now</a>
         </div>
@@ -1077,8 +1362,9 @@
                     <div class="badge-dot"></div>
                     Live &mdash; Accepting Calls 24/7
                 </div>
-                <h1>Meet <span class="gradient-text">Aura</span><br>Your AI Voice Agent</h1>
-                <p>A personal AI voice agent that handles inbound recruiter calls for Ranjith &mdash; specializing in hyperscale distributed cloud systems.</p>
+                <h1>Never miss a<br>recruiter call <span class="gradient-text">again</span></h1>
+                <p class="hero-tagline">Aura screens, qualifies, and converts inbound recruiter calls for Ranjith &mdash; so no opportunity goes to voicemail.</p>
+                <p class="hero-sub">Streaming STT &rarr; LLM &rarr; TTS with sub-second response latency</p>
                 <div class="hero-actions">
                     <a href="tel:+14259619363" class="btn-primary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1086,16 +1372,17 @@
                         </svg>
                         Call Aura
                     </a>
-                    <a href="#how-it-works" class="btn-secondary">
-                        Learn More
+                    <a href="#live-demo" class="btn-secondary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" x2="12" y1="5" y2="19"/><polyline points="19 12 12 19 5 12"/>
+                            <polygon points="5 3 19 12 5 21 5 3"/>
                         </svg>
+                        Try Live Demo
                     </a>
                 </div>
 
                 <!-- Aura Visualizer -->
-                <div class="aura-visualizer" id="auraVisualizer" role="button" tabindex="0" aria-label="Click to play Aura's introduction" onclick="toggleAudio()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleAudio();}">
+                <div id="live-demo"></div>
+                <div class="aura-visualizer" id="auraVisualizer" role="button" tabindex="0" aria-label="Click to talk to Aura" onclick="toggleAudio()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleAudio();}">
                     <div class="aura-ring"></div>
                     <div class="aura-ring"></div>
                     <div class="aura-ring"></div>
@@ -1116,21 +1403,70 @@
                     </div>
                 </div>
 
-                <!-- Unmute label -->
-                <div class="unmute-label" id="unmuteLabel" role="button" tabindex="0" aria-label="Unmute Aura introduction" onclick="toggleAudio()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleAudio();}">
-                    <div class="unmute-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Status indicator -->
+                <div class="status-indicator" id="statusIndicator">
+                    <div class="unmute-icon" style="display:inline-flex;width:24px;height:24px;vertical-align:middle;margin-right:6px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
                             <line x1="23" x2="17" y1="9" y2="15"/>
                             <line x1="17" x2="23" y1="9" y2="15"/>
                         </svg>
                     </div>
-                    Click to unmute
+                    Click the orb to talk to Aura
                 </div>
 
                 <!-- Waveform -->
                 <div class="waveform-bar" id="waveform"></div>
                 <audio id="auraAudio" src="/static/aura-intro.mp3" preload="auto"></audio>
+            </div>
+        </section>
+
+        <!-- Why This Exists -->
+        <section id="why" class="why-section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <div class="section-label">The Problem</div>
+                    <h2 class="section-title">Recruiters don't leave voicemails</h2>
+                    <p class="section-subtitle">Missed calls are missed opportunities. Aura makes sure that never happens.</p>
+                </div>
+                <div class="why-grid">
+                    <div class="why-problem reveal">
+                        <div class="why-problem-item">
+                            <div class="why-x">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </div>
+                            <div class="why-problem-text">
+                                <h4>Calls at random times</h4>
+                                <p>Recruiters call during meetings, late at night, or across time zones. You can't always pick up.</p>
+                            </div>
+                        </div>
+                        <div class="why-problem-item">
+                            <div class="why-x">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </div>
+                            <div class="why-problem-text">
+                                <h4>Voicemail is a dead end</h4>
+                                <p>Most recruiters hang up. The ones who leave messages rarely get called back in time.</p>
+                            </div>
+                        </div>
+                        <div class="why-problem-item">
+                            <div class="why-x">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </div>
+                            <div class="why-problem-text">
+                                <h4>Opportunities vanish</h4>
+                                <p>By the time you call back, the recruiter has moved on to the next candidate.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="why-solution reveal">
+                        <div class="why-check" style="margin-bottom: 20px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <h3>Aura answers every call</h3>
+                        <p>She picks up instantly, introduces herself, understands the recruiter's intent, shares relevant details about experience and skills, collects their information, and routes everything for follow-up.<br><br>Every opportunity is captured, qualified, and preserved &mdash; 24/7, without a single missed ring.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1174,28 +1510,28 @@
                         <div class="conv-avatar caller">R</div>
                         <div>
                             <div class="conv-label caller-name">Recruiter</div>
-                            <div class="conv-bubble caller-msg">Hi, I'm looking to speak with Ranjith about a Senior Engineer role at our company.</div>
+                            <div class="conv-bubble caller-msg"><span class="typewriter" data-text="Hi, I'm looking to speak with Ranjith about a Senior Engineer role at our company."></span></div>
                         </div>
                     </div>
                     <div class="conversation-line">
                         <div class="conv-avatar aura">A</div>
                         <div>
                             <div class="conv-label aura-name">Aura</div>
-                            <div class="conv-bubble aura-msg">Hello! Thank you for reaching out. I'm Aura, Ranjith's AI assistant. I'd be happy to share details about his background. Could I get your name and company?</div>
+                            <div class="conv-bubble aura-msg"><span class="typewriter" data-text="Hello! Thank you for reaching out. I'm Aura, Ranjith's AI assistant. I'd be happy to share details about his background. Could I get your name and company?"></span></div>
                         </div>
                     </div>
                     <div class="conversation-line">
                         <div class="conv-avatar caller">R</div>
                         <div>
                             <div class="conv-label caller-name">Recruiter</div>
-                            <div class="conv-bubble caller-msg">Sure, I'm Sarah from CloudScale Inc. What's his experience with distributed systems?</div>
+                            <div class="conv-bubble caller-msg"><span class="typewriter" data-text="Sure, I'm Sarah from CloudScale Inc. What's his experience with distributed systems?"></span></div>
                         </div>
                     </div>
                     <div class="conversation-line">
                         <div class="conv-avatar aura">A</div>
                         <div>
                             <div class="conv-label aura-name">Aura</div>
-                            <div class="conv-bubble aura-msg">Great question, Sarah. Ranjith specializes in hyperscale distributed cloud systems across Azure and AWS. He's reduced p95 latency by 15% and improved service availability by 12% through deep system-level analysis. Shall I share more details?</div>
+                            <div class="conv-bubble aura-msg"><span class="typewriter" data-text="Great question, Sarah. Ranjith builds and operates production distributed systems — real-time voice AI pipelines, multi-tenant orchestration platforms, and observability stacks. Shall I go deeper on any of these?"></span></div>
                         </div>
                     </div>
                 </div>
@@ -1218,8 +1554,8 @@
                                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
                             </svg>
                         </div>
-                        <h3>Natural Voice Interaction</h3>
-                        <p>Real-time speech-to-text and text-to-speech powered by Deepgram and OpenAI. Conversations feel natural, not robotic.</p>
+                        <h3>Streaming Voice Pipeline</h3>
+                        <p>Streaming STT &rarr; LLM &rarr; TTS pipeline with sub-second response latency. Powered by Deepgram and OpenAI.</p>
                     </div>
                     <div class="capability-card reveal">
                         <div class="capability-icon cyan">
@@ -1261,30 +1597,109 @@
             </div>
         </section>
 
+        <!-- Architecture -->
+        <section id="architecture">
+            <div class="container">
+                <div class="section-header reveal">
+                    <div class="section-label">Architecture</div>
+                    <h2 class="section-title">Built for real-time voice at scale</h2>
+                    <p class="section-subtitle">Low-latency streaming pipeline with real-time inference and fault-tolerant orchestration.</p>
+                </div>
+                <div class="arch-grid reveal">
+                    <div class="arch-item">
+                        <div class="arch-icon">&lt; 300ms</div>
+                        <h4>End-to-End Latency</h4>
+                        <p>Sub-300ms from voice input to spoken response</p>
+                    </div>
+                    <div class="arch-item">
+                        <div class="arch-icon">STT &rarr; LLM &rarr; TTS</div>
+                        <h4>Streaming Pipeline</h4>
+                        <p>Chunk-level streaming, no waiting for full utterance</p>
+                    </div>
+                    <div class="arch-item">
+                        <div class="arch-icon">WebRTC</div>
+                        <h4>LiveKit Transport</h4>
+                        <p>Low-latency media via WebRTC + SIP bridge</p>
+                    </div>
+                    <div class="arch-item">
+                        <div class="arch-icon">retry / reconnect</div>
+                        <h4>Failover Handling</h4>
+                        <p>Disconnect detection, graceful recovery, timeout guards</p>
+                    </div>
+                    <div class="arch-item">
+                        <div class="arch-icon">JWT + stateless</div>
+                        <h4>Session Auth</h4>
+                        <p>Token-based sessions, no server-side state</p>
+                    </div>
+                </div>
+                <p class="arch-tradeoff reveal">Designed to balance latency, accuracy, and conversational naturalness.</p>
+            </div>
+        </section>
+
+        <!-- Trust Layer -->
+        <section id="trust">
+            <div class="container">
+                <div class="section-header reveal">
+                    <div class="section-label">Engineering Principles</div>
+                    <h2 class="section-title">Built with production discipline</h2>
+                </div>
+                <div class="trust-grid reveal">
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <h4>No Hallucinated Commitments</h4>
+                        <p>Aura never fabricates credentials, compensation, or availability</p>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
+                        <h4>Secure Token Sessions</h4>
+                        <p>JWT-based auth with scoped grants, no persistent state</p>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        </div>
+                        <h4>Full Observability</h4>
+                        <p>Structured JSON logs, Prometheus metrics, call tracing</p>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        </div>
+                        <h4>Fail-Safe Disconnect</h4>
+                        <p>Graceful recovery on network drops, timeout guards on every stage</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- About / Profile -->
         <section id="about" class="profile-section">
             <div class="container">
                 <div class="profile-layout">
                     <div class="profile-info reveal">
                         <div class="section-label">About Ranjith</div>
-                        <h2 class="section-title">Cloud Engineer</h2>
-                        <p class="section-subtitle">Specializing in hyperscale distributed cloud systems, real-time performance analysis, and reliability architecture across Azure and AWS. Focused on building scalable, observable, fault-tolerant systems.</p>
+                        <h2 class="section-title">Systems Engineer</h2>
+                        <p class="section-subtitle">Builds and operates production AI and cloud infrastructure &mdash; real-time voice pipelines, multi-tenant orchestration platforms, and full observability stacks. End-to-end ownership from infrastructure to application layer.</p>
                         <div class="profile-stats">
                             <div class="stat-card">
-                                <div class="stat-value">15%</div>
-                                <div class="stat-label">p95 Latency Reduction</div>
+                                <div class="stat-value">7</div>
+                                <div class="stat-label">Production Systems</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-value">30%</div>
-                                <div class="stat-label">MTTD/MTTR Improvement</div>
+                                <div class="stat-value">&lt;2s</div>
+                                <div class="stat-label">Voice Latency</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-value">20%</div>
-                                <div class="stat-label">Platform Adoption Growth</div>
+                                <div class="stat-value">87.5%</div>
+                                <div class="stat-label">Fine-Tune Accuracy</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-value">25%</div>
-                                <div class="stat-label">Reliability Improvement</div>
+                                <div class="stat-value">130+</div>
+                                <div class="stat-label">Tests, Zero Regressions</div>
                             </div>
                         </div>
                     </div>
@@ -1294,7 +1709,7 @@
                             <div class="profile-card">
                                 <div class="avatar">RV</div>
                                 <div class="name">Ranjith</div>
-                                <div class="role">Cloud Engineer</div>
+                                <div class="role">Systems Engineer</div>
                             </div>
                         </div>
                     </div>
@@ -1309,7 +1724,21 @@
                 <div class="cta-content reveal">
                     <div class="section-label">Get In Touch</div>
                     <h2 class="section-title">Ready to connect?</h2>
-                    <p class="section-subtitle" style="margin: 0 auto 24px;">Call Aura now. She'll tell you everything you need to know about Ranjith and help set up next steps.</p>
+                    <p class="section-subtitle" style="margin: 0 auto 8px;">Call Aura or try the live demo. She'll tell you everything you need to know.</p>
+                    <div class="cta-actions">
+                        <a href="tel:+14259619363" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            Call Aura
+                        </a>
+                        <a href="#live-demo" class="btn-secondary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            Try Live Demo
+                        </a>
+                    </div>
                     <a href="tel:+14259619363" class="phone-display" style="text-decoration:none;color:var(--text-primary);">
                         <div class="phone-icon">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1325,7 +1754,8 @@
         <!-- Footer -->
         <footer>
             <div class="container">
-                <p>&copy; 2026 Aura Voice Agent &mdash; Built on <a href="https://cloudaura.cloud">CloudAura</a></p>
+                <p class="footer-main">Built and operated by Ranjith &mdash; Systems Engineer focused on distributed systems &amp; real-time infrastructure.</p>
+                <p class="footer-sub">&copy; 2026 <a href="https://cloudaura.cloud">cloudaura.cloud</a></p>
             </div>
         </footer>
 
@@ -1344,34 +1774,50 @@
         const visualizer = document.getElementById('auraVisualizer');
         const iconMuted = document.getElementById('iconMuted');
         const iconPlaying = document.getElementById('iconPlaying');
-        const unmuteLabel = document.getElementById('unmuteLabel');
+        const statusIndicator = document.getElementById('statusIndicator');
         const waveformEl = document.getElementById('waveform');
 
         let livekitRoom = null;
         let isConnected = false;
         let isConnecting = false;
 
+        function updateStatus(text, state) {
+            if (state === 'connected') {
+                statusIndicator.className = 'status-indicator connected';
+                statusIndicator.innerHTML = '<span class="status-dot"></span>' + text;
+            } else if (state === 'speaking') {
+                statusIndicator.className = 'status-indicator speaking';
+                statusIndicator.innerHTML = '<span class="status-dot"></span>' + text;
+            } else if (state === 'connecting') {
+                statusIndicator.className = 'status-indicator connected';
+                statusIndicator.innerHTML = '<span class="status-dot"></span>' + text;
+            } else {
+                statusIndicator.className = 'status-indicator';
+                statusIndicator.innerHTML = '<div class="unmute-icon" style="display:inline-flex;width:24px;height:24px;vertical-align:middle;margin-right:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" x2="17" y1="9" y2="15"/><line x1="17" x2="23" y1="9" y2="15"/></svg></div>Click the orb to talk to Aura';
+            }
+        }
+
         function setPlayingState() {
             visualizer.classList.add('playing');
             iconMuted.style.display = 'none';
             iconPlaying.style.display = 'block';
-            unmuteLabel.classList.add('hidden');
             waveformEl.classList.add('active');
+            updateStatus('Connected \u00b7 Listening...', 'connected');
         }
 
         function setMutedState() {
             visualizer.classList.remove('playing');
             iconMuted.style.display = 'block';
             iconPlaying.style.display = 'none';
-            unmuteLabel.classList.remove('hidden');
             waveformEl.classList.remove('active');
+            updateStatus('', 'idle');
         }
 
         function setConnectingState() {
             visualizer.classList.add('playing');
             iconMuted.style.display = 'none';
             iconPlaying.style.display = 'block';
-            unmuteLabel.classList.add('hidden');
+            updateStatus('Connecting...', 'connecting');
         }
 
         async function toggleAudio() {
@@ -1413,6 +1859,13 @@
                 room.on(LivekitClient.RoomEvent.ActiveSpeakersChanged, (speakers) => {
                     const agentSpeaking = speakers.some(s => s.identity && s.identity.startsWith('agent'));
                     waveformEl.classList.toggle('active', agentSpeaking);
+                    if (isConnected) {
+                        if (agentSpeaking) {
+                            updateStatus('Aura is speaking...', 'speaking');
+                        } else {
+                            updateStatus('Connected \u00b7 Listening...', 'connected');
+                        }
+                    }
                 });
 
                 // Attach remote audio tracks to the DOM for playback
@@ -1465,13 +1918,36 @@
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // Conversation animation on scroll — staggered reveal
+        // Conversation animation — typewriter effect
         const convObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const lines = entry.target.querySelectorAll('.conversation-line');
+                    let delay = 0;
                     lines.forEach((line, i) => {
-                        setTimeout(() => line.classList.add('show'), i * 400);
+                        const typewriter = line.querySelector('.typewriter');
+                        const text = typewriter ? typewriter.dataset.text : '';
+                        const typingTime = text.length * 18;
+
+                        setTimeout(() => {
+                            line.classList.add('show');
+                            if (typewriter) {
+                                typewriter.innerHTML = '<span class="typing-cursor"></span>';
+                                let charIndex = 0;
+                                const typeInterval = setInterval(() => {
+                                    if (charIndex < text.length) {
+                                        typewriter.textContent = text.substring(0, charIndex + 1);
+                                        typewriter.innerHTML += '<span class="typing-cursor"></span>';
+                                        charIndex++;
+                                    } else {
+                                        typewriter.textContent = text;
+                                        clearInterval(typeInterval);
+                                    }
+                                }, 18);
+                            }
+                        }, delay);
+
+                        delay += 300 + typingTime;
                     });
                     convObserver.unobserve(entry.target);
                 }
