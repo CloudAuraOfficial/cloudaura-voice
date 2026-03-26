@@ -12,7 +12,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from app.config import get_settings
 from app.logging_config import configure_logging
 from app.models.schemas import ErrorResponse
-from app.routers import health, token, webhooks
+from app.routers import health, telnyx, token, webhooks
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -44,12 +44,13 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    cors_origins = [settings.public_base_url]
+    if settings.environment != "production":
+        cors_origins.append("http://localhost:8000")
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "https://voice.cloudaura.cloud",
-            "http://localhost:8000",
-        ],
+        allow_origins=cors_origins,
         allow_methods=["POST"],
         allow_headers=["Content-Type"],
     )
@@ -58,6 +59,7 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router)
     app.include_router(token.router)
+    app.include_router(telnyx.router)
     app.include_router(webhooks.router)
 
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)

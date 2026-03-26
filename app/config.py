@@ -31,10 +31,15 @@ class Settings(BaseSettings):
     # TTS provider: "openai" or "elevenlabs"
     tts_provider: str = "openai"
 
-    # Twilio
-    twilio_account_sid: str
-    twilio_auth_token: str
-    twilio_phone_number: str
+    # Telnyx
+    telnyx_api_key: str = ""
+    telnyx_phone_number: str = ""
+    telnyx_assistant_id: str = ""
+
+    # Twilio (legacy — kept for backwards compatibility during migration)
+    twilio_account_sid: str = ""
+    twilio_auth_token: str = ""
+    twilio_phone_number: str = ""
 
     # Airtable
     airtable_api_key: str
@@ -45,7 +50,7 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = 8000
     environment: str = "development"
-    public_base_url: str = "https://voice.cloudaura.cloud"
+    public_base_url: str = "http://localhost:8000"
     log_level: str = "INFO"
 
 
