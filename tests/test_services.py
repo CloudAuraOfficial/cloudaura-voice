@@ -233,3 +233,75 @@ class TestAirtableService:
         result = await svc.find_by_call_sid("CA_err")
 
         assert result is None
+
+
+class TestTelnyxService:
+    """Tests for app.services.telnyx_service.TelnyxService (pure parsers)."""
+
+    def _make_service(self):
+        with patch("app.services.telnyx_service.get_settings") as mock_settings:
+            mock_settings.return_value = MagicMock(
+                telnyx_assistant_id="assistant-test",
+                telnyx_api_key="KEY_test",
+            )
+            from app.services.telnyx_service import TelnyxService
+            return TelnyxService()
+
+    def test_parse_call_control_webhook_extracts_inbound_call(self):
+        svc = self._make_service()
+        body = {
+            "data": {
+                "event_type": "call.initiated",
+                "payload": {
+                    "call_control_id": "cc_abc123",
+                    "call_leg_id": "leg_xyz",
+                    "from": "+15551112222",
+                    "to": "+14254339697",
+                    "direction": "inbound",
+                    "state": "parked",
+                },
+            }
+        }
+        result = svc.parse_call_control_webhook(body)
+        assert result["event_type"] == "call.initiated"
+        assert result["call_control_id"] == "cc_abc123"
+        assert result["caller_number"] == "+15551112222"
+        assert result["direction"] == "inbound"
+
+    def test_parse_call_control_webhook_handles_missing_payload(self):
+        svc = self._make_service()
+        result = svc.parse_call_control_webhook({})
+        assert result["event_type"] == "unknown"
+        assert result["call_control_id"] == ""
+        assert result["direction"] == "inbound"
+
+    def test_is_terminal_event_recognises_hangup(self):
+        svc = self._make_service()
+        assert svc.is_terminal_event("call.hangup") is True
+        assert svc.is_terminal_event("call.machine.detection.ended") is True
+        assert svc.is_terminal_event("call.answered") is False
+        assert svc.is_terminal_event("call.initiated") is False
+
+    def test_map_to_resolution_normal_clearing_is_resolved(self):
+        svc = self._make_service()
+        assert svc.map_to_resolution("call.hangup", "normal_clearing") == "resolved"
+        assert svc.map_to_resolution("completed", "") == "resolved"
+
+    def test_map_to_resolution_failure_causes_dropped(self):
+        svc = self._make_service()
+        assert svc.map_to_resolution("call.hangup", "user_busy") == "dropped"
+        assert svc.map_to_resolution("failed", "") == "dropped"
+
+    def test_parse_voice_webhook_texml_flat_payload(self):
+        svc = self._make_service()
+        body = {
+            "CallSid": "v3:abc",
+            "From": "+15558675309",
+            "To": "+14254339697",
+            "CallStatus": "ringing",
+            "Direction": "inbound",
+        }
+        result = svc.parse_voice_webhook(body)
+        assert result["call_control_id"] == "v3:abc"
+        assert result["caller_number"] == "+15558675309"
+        assert result["direction"] == "inbound"

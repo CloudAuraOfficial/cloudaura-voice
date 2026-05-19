@@ -1,9 +1,6 @@
-import hashlib
-import hmac
-import time
-from typing import Any, Optional
-
+import httpx
 import structlog
+from typing import Any, Optional
 
 from app.config import get_settings
 
@@ -11,38 +8,51 @@ logger = structlog.get_logger(__name__)
 
 
 class TelnyxService:
-    """Handles Telnyx TeXML webhook processing and response generation."""
+    """Handles Telnyx webhook processing and AI Assistant integration."""
+
+    BASE_URL = "https://api.telnyx.com/v2"
 
     def __init__(self) -> None:
         settings = get_settings()
         self._assistant_id = settings.telnyx_assistant_id
         self._api_key = settings.telnyx_api_key
 
-    def build_ai_assistant_response(self) -> str:
-        """Return TeXML that connects the call to the Telnyx AI Assistant."""
-        return f"""<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-    <Connect>
-        <AIAssistant id="{self._assistant_id}">
-        </AIAssistant>
-    </Connect>
-</Response>"""
+    async def answer_call(self, call_control_id: str) -> dict[str, Any]:
+        """Answer an inbound call via Call Control API."""
+        url = f"{self.BASE_URL}/calls/{call_control_id}/actions/answer"
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                url,
+                headers={
+                    "Authorization": f"Bearer {self._api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={"client_state": "answered"},
+            )
+            resp.raise_for_status()
+            return resp.json()
 
-    def build_error_response(self, message: str) -> str:
-        """Return TeXML that speaks an error message and hangs up."""
-        return f"""<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-    <Say>{message}</Say>
-    <Hangup/>
-</Response>"""
+    async def start_ai_assistant(self, call_control_id: str) -> dict[str, Any]:
+        """Start the AI Assistant on a call via Call Control API."""
+        url = f"{self.BASE_URL}/calls/{call_control_id}/actions/ai_assistant_start"
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                url,
+                headers={
+                    "Authorization": f"Bearer {self._api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={"id": self._assistant_id},
+            )
+            resp.raise_for_status()
+            return resp.json()
 
     @staticmethod
     def parse_voice_webhook(body: dict[str, Any]) -> dict[str, Any]:
-        """Extract call metadata from a Telnyx voice webhook payload.
+        """Extract call metadata from a Telnyx TeXML voice webhook.
 
-        Telnyx sends webhooks as JSON with call details nested under
-        'data.payload' for event-based webhooks, or as form-encoded
-        TeXML-style params (CallSid, From, To, etc.).
+        TeXML webhooks arrive as form-encoded or JSON with flat fields
+        like CallSid, From, To, etc.
         """
         # TeXML-style flat payload (form-encoded forwarded as dict)
         if "CallSid" in body or "From" in body:
@@ -63,6 +73,22 @@ class TelnyxService:
             "called_number": payload.get("to", ""),
             "call_status": data.get("event_type", "unknown"),
             "direction": payload.get("direction", "inbound"),
+        }
+
+    @staticmethod
+    def parse_call_control_webhook(body: dict[str, Any]) -> dict[str, Any]:
+        """Extract call metadata from a Telnyx Call Control webhook."""
+        data = body.get("data", {})
+        payload = data.get("payload", {})
+        return {
+            "event_type": data.get("event_type", "unknown"),
+            "call_control_id": payload.get("call_control_id", ""),
+            "call_leg_id": payload.get("call_leg_id", ""),
+            "caller_number": payload.get("from", ""),
+            "called_number": payload.get("to", ""),
+            "direction": payload.get("direction", "inbound"),
+            "state": payload.get("state", ""),
+            "client_state": payload.get("client_state", ""),
         }
 
     @staticmethod
@@ -103,9 +129,16 @@ class TelnyxService:
         return status in terminal
 
     @staticmethod
-    def map_to_resolution(status: str) -> str:
-        """Map Telnyx call status to ResolutionStatus value."""
-        if status in ("completed", "call.hangup"):
+    def is_terminal_event(event_type: str) -> bool:
+        """Check if a Call Control event represents a terminal state."""
+        return event_type in {"call.hangup", "call.machine.detection.ended"}
+
+    @staticmethod
+    def map_to_resolution(event_type: str, hangup_cause: str = "") -> str:
+        """Map event type to resolution status."""
+        if event_type in ("completed", "call.hangup") and hangup_cause in (
+            "", "normal_clearing", "originator_cancel"
+        ):
             return "resolved"
         return "dropped"
 
