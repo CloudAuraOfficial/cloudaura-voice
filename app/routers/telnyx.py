@@ -1,5 +1,5 @@
 import structlog
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
 
 from app.models.schemas import InteractionRecord, ResolutionStatus
@@ -19,10 +19,22 @@ def _airtable() -> AirtableService:
     return AirtableService()
 
 
+async def _verify_telnyx(request: Request) -> None:
+    """Reject the request with 403 unless it carries a valid Telnyx Ed25519 signature."""
+    raw = await request.body()  # cached — handlers can still call .json()/.form()
+    if not _telnyx().verify_signature(
+        raw,
+        request.headers.get("Telnyx-Signature-Ed25519", ""),
+        request.headers.get("Telnyx-Timestamp", ""),
+    ):
+        raise HTTPException(status_code=403, detail="Invalid Telnyx signature")
+
+
 @router.post("/voice", response_class=Response)
 async def telnyx_voice_webhook(request: Request):
     """TeXML voice webhook — answers inbound calls with a Say verb for testing,
     then transfers to the AI Assistant via Call Control API."""
+    await _verify_telnyx(request)
     try:
         content_type = request.headers.get("content-type", "")
         if "application/json" in content_type:
@@ -82,6 +94,7 @@ async def telnyx_voice_webhook(request: Request):
 @router.post("/status", response_class=Response)
 async def telnyx_status_webhook(request: Request):
     """Receives call status updates from Telnyx TeXML."""
+    await _verify_telnyx(request)
     try:
         content_type = request.headers.get("content-type", "")
         if "application/json" in content_type:
@@ -131,6 +144,7 @@ async def telnyx_call_control_webhook(request: Request):
     2. call.answered → start AI assistant
     3. call.hangup → log final state
     """
+    await _verify_telnyx(request)
     try:
         body = await request.json()
     except Exception:

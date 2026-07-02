@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     telnyx_api_key: str = ""
     telnyx_phone_number: str = ""
     telnyx_assistant_id: str = ""
+    telnyx_public_key: str = ""  # base64 Ed25519 key from Telnyx portal; webhook verify fails closed if unset
 
     # Twilio (legacy — kept for backwards compatibility during migration)
     twilio_account_sid: str = ""

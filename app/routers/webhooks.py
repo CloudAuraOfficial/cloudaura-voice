@@ -1,8 +1,9 @@
 from typing import Optional
 
 import structlog
-from fastapi import APIRouter, Form, Request, Response
+from fastapi import APIRouter, Form, HTTPException, Request, Response
 
+from app.config import get_settings
 from app.models.schemas import ResolutionStatus
 from app.services.airtable_service import AirtableService
 from app.services.twilio_service import TwilioService
@@ -20,6 +21,22 @@ def _airtable() -> AirtableService:
     return AirtableService()
 
 
+async def _verify_twilio(request: Request) -> None:
+    """Reject the request with 403 unless X-Twilio-Signature validates.
+
+    Twilio signs the public webhook URL, so we rebuild it from PUBLIC_BASE_URL
+    rather than request.url (which is the internal proxied host).
+    """
+    settings = get_settings()
+    url = str(settings.public_base_url).rstrip("/") + request.url.path
+    if request.url.query:
+        url += "?" + request.url.query
+    form = dict(await request.form())  # cached — Form(...) params already parsed it
+    signature = request.headers.get("X-Twilio-Signature", "")
+    if not _twilio().validate_signature(url, form, signature):
+        raise HTTPException(status_code=403, detail="Invalid Twilio signature")
+
+
 @router.post("/twilio/voice")
 async def twilio_voice(
     request: Request,
@@ -33,6 +50,7 @@ async def twilio_voice(
     Builds a LiveKit room name from the CallSid and returns TwiML
     that routes the call into that room via SIP.
     """
+    await _verify_twilio(request)
     log = logger.bind(call_sid=CallSid, caller=From, status=CallStatus)
 
     # Sanitise caller number for inclusion in the room name (no '+' allowed in SIP URI path)
@@ -55,6 +73,7 @@ async def twilio_voice(
 
 @router.post("/twilio/status")
 async def twilio_status(
+    request: Request,
     CallSid: str = Form(...),
     CallStatus: str = Form(...),
     CallDuration: Optional[str] = Form(None),
@@ -65,6 +84,7 @@ async def twilio_status(
     Twilio status callback — fired on every call state transition.
     On terminal states, updates the Airtable record with duration and outcome.
     """
+    await _verify_twilio(request)
     log = logger.bind(call_sid=CallSid, status=CallStatus, duration=CallDuration)
     log.info("twilio.status_callback")
 
