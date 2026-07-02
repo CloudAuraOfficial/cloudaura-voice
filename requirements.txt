@@ -22,6 +22,9 @@ pyairtable>=2.3.0
 # ── HTTP client ───────────────────────────────────────────────────────────────
 httpx>=0.27.0
 
+# ── Crypto (Telnyx Ed25519 webhook verification) ──────────────────────────────
+cryptography>=41.0.0
+
 # ── Structured logging ────────────────────────────────────────────────────────
 structlog>=24.2.0
 

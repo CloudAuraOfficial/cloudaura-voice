@@ -81,7 +81,9 @@ class TestTwilioStatusWebhook:
     def test_completed_call_updates_airtable(
         self, client, twilio_status_payload_completed
     ):
-        with patch("app.routers.webhooks._airtable") as mock_factory:
+        with patch("app.routers.webhooks._airtable") as mock_factory, \
+                patch("app.routers.webhooks._twilio") as mock_tw:
+            mock_tw.return_value.validate_signature.return_value = True
             svc = AsyncMock()
             svc.find_by_call_sid.return_value = {
                 "id": "rec123",
@@ -103,7 +105,9 @@ class TestTwilioStatusWebhook:
             assert call_kwargs["duration_seconds"] == 42
 
     def test_failed_call_marks_dropped(self, client, twilio_status_payload_failed):
-        with patch("app.routers.webhooks._airtable") as mock_factory:
+        with patch("app.routers.webhooks._airtable") as mock_factory, \
+                patch("app.routers.webhooks._twilio") as mock_tw:
+            mock_tw.return_value.validate_signature.return_value = True
             svc = AsyncMock()
             svc.find_by_call_sid.return_value = {
                 "id": "rec456",
@@ -125,7 +129,9 @@ class TestTwilioStatusWebhook:
             "From": "+15559998888",
             "To": "+15550001111",
         }
-        with patch("app.routers.webhooks._airtable") as mock_factory:
+        with patch("app.routers.webhooks._airtable") as mock_factory, \
+                patch("app.routers.webhooks._twilio") as mock_tw:
+            mock_tw.return_value.validate_signature.return_value = True
             svc = AsyncMock()
             mock_factory.return_value = svc
 
@@ -141,7 +147,9 @@ class TestTwilioStatusWebhook:
             "From": "+15559998888",
             "To": "+15550001111",
         }
-        with patch("app.routers.webhooks._airtable") as mock_factory:
+        with patch("app.routers.webhooks._airtable") as mock_factory, \
+                patch("app.routers.webhooks._twilio") as mock_tw:
+            mock_tw.return_value.validate_signature.return_value = True
             svc = AsyncMock()
             svc.find_by_call_sid.return_value = None
             mock_factory.return_value = svc

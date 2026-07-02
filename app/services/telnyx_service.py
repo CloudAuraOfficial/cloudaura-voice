@@ -1,10 +1,18 @@
+import base64
+import time
+from typing import Any, Optional
+
 import httpx
 import structlog
-from typing import Any, Optional
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 from app.config import get_settings
 
 logger = structlog.get_logger(__name__)
+
+# Reject webhooks whose signed timestamp is older than this (replay protection).
+TELNYX_TOLERANCE_SECONDS = 300
 
 
 class TelnyxService:
@@ -16,6 +24,29 @@ class TelnyxService:
         settings = get_settings()
         self._assistant_id = settings.telnyx_assistant_id
         self._api_key = settings.telnyx_api_key
+        self._public_key = settings.telnyx_public_key
+
+    def verify_signature(self, payload: bytes, signature: str, timestamp: str) -> bool:
+        """Verify a Telnyx webhook via Ed25519. Fails closed if the public key is unset.
+
+        Telnyx signs ``f"{timestamp}|{raw_body}"`` and sends the base64 signature in the
+        Telnyx-Signature-Ed25519 header and the unix timestamp in Telnyx-Timestamp.
+        """
+        if not self._public_key:
+            logger.error("telnyx.verify_no_public_key")
+            return False
+        if not signature or not timestamp:
+            return False
+        try:
+            if abs(time.time() - int(timestamp)) > TELNYX_TOLERANCE_SECONDS:
+                logger.warning("telnyx.verify_stale_timestamp", timestamp=timestamp)
+                return False
+            key = Ed25519PublicKey.from_public_bytes(base64.b64decode(self._public_key))
+            key.verify(base64.b64decode(signature), f"{timestamp}|".encode() + payload)
+            return True
+        except (InvalidSignature, ValueError, TypeError) as exc:
+            logger.warning("telnyx.verify_failed", error=str(exc))
+            return False
 
     async def answer_call(self, call_control_id: str) -> dict[str, Any]:
         """Answer an inbound call via Call Control API."""
