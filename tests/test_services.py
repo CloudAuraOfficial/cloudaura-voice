@@ -30,7 +30,10 @@ class TestTwilioService:
 
         assert "sip:" in twiml
         assert "call_CA123_-15559998888" in twiml
-        assert "sip.livekit.cloud" in twiml
+        # assert against the configured SIP host, not a hardcoded literal — the
+        # deploy/CI env overrides LIVEKIT_SIP_HOST (e.g. a project subdomain).
+        from app.config import get_settings
+        assert get_settings().livekit_sip_host in twiml
         assert "transport=tls" in twiml
 
     def test_build_sip_response_is_valid_xml(
