@@ -1,11 +1,10 @@
 """Unit tests for service classes (TwilioService, AirtableService)."""
 
-from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.models.schemas import InteractionRecord, ResolutionStatus
+from app.models.schemas import InteractionRecord
 
 
 class TestTwilioService:
