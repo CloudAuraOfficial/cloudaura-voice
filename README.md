@@ -2,6 +2,8 @@
 
 AI-powered voice agent that handles inbound phone calls via Twilio, routes them through LiveKit SIP into a real-time voice pipeline (Deepgram STT, OpenAI LLM, configurable TTS), and logs every interaction to Airtable.
 
+> **Telephony paths.** The primary path documented below is Twilio → LiveKit SIP. A second, newer path (`app/routers/telnyx.py`) answers Telnyx calls with a Telnyx-hosted assistant and does not use LiveKit/Deepgram/OpenAI; `.env.example` marks Twilio as legacy during the migration.
+
 ## Architecture
 
 ```mermaid
