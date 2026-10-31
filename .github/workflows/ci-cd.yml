@@ -30,7 +30,11 @@ jobs:
   deploy:
     needs: lint-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # DISABLED 2026-10-31: P5 stopped by owner on the VPS (docker compose stop). Restore by
+    # replacing the next line with:
+    #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # (smoke-test depends on this job and is skipped with it).
+    if: false
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1
