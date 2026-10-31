@@ -46,7 +46,6 @@ jobs:
             cd ~/cloudaura-voice
             git pull origin main
             docker compose up -d --build
-        continue-on-error: true
 
   smoke-test:
     needs: deploy
